@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_KEY = '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';
+const API_KEY = process.env['OPENAI_API_KEY'];
 
 export async function getCompletions(prompt: string, model: string, numCompletions: number) {
   try {
