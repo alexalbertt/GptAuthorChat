@@ -15,7 +15,7 @@ const Page = () => {
   };
 
   return (
-    <div>
+    <div className="main-container">
       <AuthorSelector onAuthorChange={handleAuthorChange} />
       <Chat selectedAuthor={selectedAuthor} />
     </div>
