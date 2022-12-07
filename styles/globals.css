@@ -142,7 +142,7 @@ box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
   position: relative;
   display: flex;
   flex-direction: row;
-  align-items: end;
+  align-items: flex-end;
   height: 170px;
   width: 800px;
 }
@@ -157,7 +157,7 @@ box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 .author-info-text-container {
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
 }
 
 .author-select-container {

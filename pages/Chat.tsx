@@ -7,27 +7,13 @@ const Chat = ({ selectedAuthor }) => {
   const [isWaiting, setIsWaiting] = useState(false);
   const messagesEndRef = React.useRef(null);
 
-  const API_KEY = process.env.OPENAI_API_KEY;
-
-  // Get question completions through post to the OpenAI API
-  const getCompletions = async (prompt, model, numCompletions) => {
+  const fetchCompletions = async (prompt) => {
     try {
-      const response = await axios.post(
-        'https://api.openai.com/v1/completions',
-        {
-          prompt,
-          model,
-          max_tokens: numCompletions,
-          temperature: 0.5,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        }
-      );
-      return response.data;
+      const response = await fetch(`/api/chat?prompt=${prompt}`);
+      const completions = await response.json();
+      return completions;
     } catch (error) {
+      alert("Error chatting");
       console.error(error);
     }
   };
@@ -44,14 +30,12 @@ const Chat = ({ selectedAuthor }) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Use the OpenAI API to generate a response to the user's input
     // Generate a response to the user's input
     try {
       const savedUserInput = userInput.match(/[.?!]$/) ? userInput : userInput + ".";
       setUserInput('');
       setChatHistory([...chatHistory, { author: "You", text: savedUserInput }]);
-      // Scroll the last message into view
-      // messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+
       const originalPrompt = `Pretend you are ${selectedAuthor}. You are having a conversation with a student interested in the ideas you have written about in your books. During this conversation, do not break character or give any indication that you are not ${selectedAuthor}. Only respond as ${selectedAuthor} and do not simulate what the student would say.
       
       For example:
@@ -68,9 +52,10 @@ const Chat = ({ selectedAuthor }) => {
       setIsWaiting(true);
       await sleep(500);
 
-      const completions = await getCompletions(prompt, 'text-davinci-003', 128);
+      const completions = await fetchCompletions(prompt);
       // Destructure the response to get the chat response
-      const { choices } = completions;
+      const { choices } = completions.result;
+
       const chatResponse = choices.map((choice) => ({
         author: selectedAuthor,
         text: choice.text,
