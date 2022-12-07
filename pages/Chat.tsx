@@ -1,12 +1,36 @@
 import React, { useState } from 'react';
-// Import the generateResponse function from the openai module
-import { getCompletions } from './openai';
+import axios from 'axios';
 
 const Chat = ({ selectedAuthor }) => {
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState<{ author: string; text: string }[]>([]);
   const [isWaiting, setIsWaiting] = useState(false);
   const messagesEndRef = React.useRef(null);
+
+  const API_KEY = process.env['OPENAI_API_KEY'];
+
+  // Get question completions through post to the OpenAI API
+  const getCompletions = async (prompt, model, numCompletions) => {
+    try {
+      const response = await axios.post(
+        'https://api.openai.com/v1/completions',
+        {
+          prompt,
+          model,
+          max_tokens: numCompletions,
+          temperature: 0.5,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // This will reset the chat history when a new author is selected
   React.useEffect(() => {
@@ -39,11 +63,11 @@ const Chat = ({ selectedAuthor }) => {
       const prompt = originalPrompt + chatHistory
         .map((message) => message.text)
         .join("\n\n") + `\n\n${savedUserInput}\n\n`;
-      console.log(chatHistory)
-      console.log(prompt);
+
       await sleep(800);
       setIsWaiting(true);
       await sleep(500);
+
       const completions = await getCompletions(prompt, 'text-davinci-003', 128);
       // Destructure the response to get the chat response
       const { choices } = completions;
