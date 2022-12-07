@@ -7,7 +7,7 @@ const Chat = ({ selectedAuthor }) => {
   const [isWaiting, setIsWaiting] = useState(false);
   const messagesEndRef = React.useRef(null);
 
-  const API_KEY = process.env['OPENAI_API_KEY'];
+  const API_KEY = process.env.OPENAI_API_KEY;
 
   // Get question completions through post to the OpenAI API
   const getCompletions = async (prompt, model, numCompletions) => {
