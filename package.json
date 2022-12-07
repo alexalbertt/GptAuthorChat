@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://alexalbertt.github.io/gptauthorchat",
   "scripts": {
-    "deploy": "npm run build && gh-pages -d out -b main"
+    "deploy": "npm run build && gh-pages -d out -b main",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
