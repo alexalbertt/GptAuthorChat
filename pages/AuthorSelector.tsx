@@ -38,15 +38,15 @@ const AuthorSelector = (props: AuthorSelectorProps) => {
             </select>
           </label>
           {selectedAuthor && (
-          <div>
-            <div className="author-book">
-              Author of <em>{authorInfo.get(selectedAuthor).bookTitle}</em>.
+            <div>
+              <div className="author-book">
+                Author of <em>{authorInfo.get(selectedAuthor).bookTitle}</em>.
+              </div>
+              <div className="author-wiki">
+                <a href={authorInfo.get(selectedAuthor).wikipediaPage} target="_blank" rel="noreferrer">Wikipedia</a>
+              </div>
             </div>
-            <div className="author-wiki">
-              <a href={authorInfo.get(selectedAuthor).wikipediaPage} target="_blank">Wikipedia</a>
-            </div>
-          </div>
-        )}
+          )}
         </div>
       </div>
     </div>
