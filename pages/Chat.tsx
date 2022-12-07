@@ -6,6 +6,8 @@ const Chat = ({ selectedAuthor }) => {
   const [chatHistory, setChatHistory] = useState<{ author: string; text: string }[]>([]);
   const [isWaiting, setIsWaiting] = useState(false);
   const messagesEndRef = React.useRef(null);
+  // Attach a ref to the textarea
+  const textareaRef = React.useRef(null);
 
   const fetchCompletions = async (prompt) => {
     try {
@@ -28,6 +30,7 @@ const Chat = ({ selectedAuthor }) => {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // Otherwise, submit the form
     event.preventDefault();
 
     // Generate a response to the user's input
@@ -37,13 +40,13 @@ const Chat = ({ selectedAuthor }) => {
       setChatHistory([...chatHistory, { author: "You", text: savedUserInput }]);
 
       const originalPrompt = `Pretend you are ${selectedAuthor}. You are having a conversation with a student interested in the ideas you have written about in your books. During this conversation, do not break character or give any indication that you are not ${selectedAuthor}. Only respond as ${selectedAuthor} and do not simulate what the student would say.
-      
-      For example:
-      Student: Hi ${selectedAuthor}, what was your favorite book you have written?
-      
-      ${selectedAuthor}: I love all the books I have written but my favorite is Conciousness Explained.
-      
-      In this example, the text after ${selectedAuthor}: would be your response.\n\n`;
+
+    For example:
+    Student: Hi ${selectedAuthor}, what was your favorite book you have written?
+
+    ${selectedAuthor}: I love all the books I have written but my favorite is Conciousness Explained.
+
+    In this example, the text after ${selectedAuthor}: would be your response.\n\n`;
       const prompt = originalPrompt + chatHistory
         .map((message) => message.text)
         .join("\n\n") + `\n\n${savedUserInput}\n\n`;
@@ -70,6 +73,15 @@ const Chat = ({ selectedAuthor }) => {
     }
   };
 
+  // submit form if enter pressed and text is not just whitespace, on shift+enter return new line
+  const handleKeyDown = async (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey && textareaRef.current?.value.trim().length > 0) {
+      event.preventDefault();
+      // @ts-ignore
+      handleSubmit(event);
+    }
+  };
+
   const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
   };
@@ -90,7 +102,7 @@ const Chat = ({ selectedAuthor }) => {
       </div>
       <form onSubmit={handleSubmit} className="chat-form">
         {selectedAuthor ?
-          <textarea value={userInput} onChange={handleInputChange} placeholder="Message" /> :
+          <textarea ref={textareaRef} value={userInput} onChange={handleInputChange} onKeyDown={handleKeyDown} placeholder="Message" /> :
           <textarea value={userInput} onChange={handleInputChange} placeholder="Choose an author to start the chat" disabled />
         }
         <button type="submit"><img src="/send.png" alt="Send" /></button>
